@@ -1,3 +1,4 @@
+from . import argsError, queryError
 import os
 import pathlib
 
@@ -6,7 +7,6 @@ class finder:
     def __init__(self):
         self.files = []
         self.folders = []
-        self.
         self.path = '.'
         self.ext = ''
         self.action = ''
