@@ -14,6 +14,7 @@ class finder:
     def run(self, action):
         pass
 
+
     def search(self, query, folder=False, file=True):
         ''' specify & search for any files or folder and return a list '''
         try:
@@ -22,19 +23,26 @@ class finder:
                 raise queryError(" No query input ")
 
             if folder is False and file is False:
-                raise argsError(" either arg(s) is required")
+                raise argsError(" either one of the arg(s) is required")
 
-            for currentFolder, subFolder, files in os.walk(self.path):
+            for currentFolder,  files in os.walk(self.path):
 
                 # if query in currentFolder or query in files:
                 #     print(f"Match Found : {currentFolder} : { files }")
                 if folder is True :
-                    pass
+                    if query in currentFolder:
+                        print(f" Match Found (Folder) : {curentFolder}  ")
+
+                if file is True:
+                    file = [x for x in files if query in x]
+                    print(f" Match Found (File) : { file }")
 
 
-
-
-
-        except:
+        except queryError as q:
             pass
+        except argsError as a:
+            pass
+        except Exception:
+            pass
+
 
