@@ -3,3 +3,9 @@ class argsError(Exception):
 
 class queryError(Exception):
     pass
+
+class extensionError(Exception):
+    pass
+
+class actionError(Exception):
+    pass
