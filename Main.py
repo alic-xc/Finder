@@ -75,19 +75,34 @@ class finder:
             if folder is False and file is False:
                 raise argsError(" either one of the arg(s) is required")
 
+            if action not in finder.valid_actions:
+                raise actionError(" action is required")
+
+            if not self.set_directory():
+
+                return False
+
+
             for currentFolder, subFolder, files in os.walk(self.path):
+
+                temp_ = r'' + currentFolder.replace("\\", "/")
+                if self.destination in temp_:
+                    # skip the loop if folders matched
+                    continue
 
                 if folder is True :
                     if query in currentFolder:
-                        print(f" Match Found (Folder) : {currentFolder}  ")
-
+                        print(f" Match Found (Folder) : {currentFolder}")
                         self.required_action(action, currentFolder)
 
                 if file is True:
-                    file = [x for x in files if query in x]
-                    print(f" Match Found (File) : { file }")
-                    self.required_action(action, file)
+                    for x in files:
+                        if query in x:
+                            print(f" Match Found (File) : { x }")
+                            self.required_action(action, f"{currentFolder}/{x}")
 
+        except actionError as a:
+            print(f"Error Found: {a}")
         except queryError as q:
             print(f"Error Found: {q}")
 
@@ -104,13 +119,20 @@ class finder:
                 raise argsError('either one of the args is required')
 
             if action == 'copy':
+                print(f" ** copying {data} **")
                 copy(data, self.destination)
 
+
             if action == 'move':
+                print(f" ** moving {data} **")
                 move(data, self.destination)
 
+
             if action == 'delete':
+                print(f" ** deleting {data} **")
                 os.unlink(data)
+
+            print("done")
 
         except argsError as a:
 
