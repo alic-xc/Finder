@@ -1,9 +1,0 @@
-A script that help arrange your files and folder where you needed them.
-it will prompt which file type the user want to filter.
-it will prompt which folder to save it to.
-
-A script that can also help user to search for file anywhere in the pc.
-
-a class finder : it will receive file extension and directory where the file to be paste
-finder attribute : extension, directory, action: delete, move, copy
-finder action : search(), validate_ext(), run(), reverse_action(), log()

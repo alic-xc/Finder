@@ -1,39 +1,57 @@
-from .FinderException import argsError, queryError, extensionError, actionError
+from .FinderException import argsError, queryError, extensionError, actionError, directoryError
+from datetime import datetime
 from shutil import copy, move
 import os
+import random
 
 class finder:
 
     valid_actions = ['delete','copy','move', 'rename']
 
-    def __init__(self):
-        self.files = []
-        self.folders = []
-        self.path = '.'
-        self.destination = ''
+    def __init__(self, path='.'):
+        self.files = 0
+        self.folders = 0
+        self.path = path
         self.ext = ''
         self.action = ''
-
-    def run(self, action):
-        pass
+        self.destination = f"{self.path}/{random.randint(1,100000)}"
 
     def extension_searcher(self, ext, action):
         """ retrieve all specific extension and perform an action on them """
         try:
 
             if ext is None:
+
                 raise extensionError(" Please, specify your extension")
 
             if action is None or action not in finder.valid_actions:
+
                 raise actionError(" Please, specify valid action ")
 
+            if not self.set_directory():
+
+                return False
+
+            counter = 0
+
             for currentFolder, subFolder, files in os.walk(self.path):
+
+                temp_ = r''+currentFolder.replace("\\","/")
+                if self.destination in temp_:
+                    # skip the loop if folders matched
+                    continue
 
                 for file in files:
 
                     if file.endswith(ext):
 
-                        copy(f"{currentFolder}/{file}", self.destination)
+                        # perform a required action with the file
+                        print(f" [100%]  {file}  :  [{currentFolder}]")
+                        full_file_path = f"{currentFolder}/{file}"
+                        self.required_action(action='copy', data=full_file_path)
+                        counter += 1
+
+            print(f'Total files found: {counter} file(s)')
 
         except extensionError as e :
 
@@ -47,9 +65,7 @@ class finder:
 
             print(f"Error Found : {e}")
 
-
-
-    def search(self, query, folder=False, file=True):
+    def search(self, query, folder=False, file=True, action=''):
         ''' specify & search for any files or folder and return a list '''
         try:
 
@@ -61,17 +77,16 @@ class finder:
 
             for currentFolder, subFolder, files in os.walk(self.path):
 
-
                 if folder is True :
                     if query in currentFolder:
                         print(f" Match Found (Folder) : {currentFolder}  ")
 
+                        self.required_action(action, currentFolder)
+
                 if file is True:
                     file = [x for x in files if query in x]
                     print(f" Match Found (File) : { file }")
-
-
-
+                    self.required_action(action, file)
 
         except queryError as q:
             print(f"Error Found: {q}")
@@ -81,7 +96,6 @@ class finder:
 
         except Exception as e:
             print(f"Error Found: {e}")
-
     
     def required_action(self, action, data ):
         """ mapped string with function on working on files or folders """
@@ -101,3 +115,24 @@ class finder:
         except argsError as a:
 
             print(f"Error found : {a} ")
+
+    def set_directory(self):
+
+        try:
+            if self.destination is None:
+                raise directoryError('no folder name ')
+            
+            if not os.path.exists(self.destination):
+                os.mkdir(self.destination)
+
+            return True
+
+        except directoryError as d:
+
+            print(f" Error found : {d} ")
+
+        except Exception as e:
+
+            print(f"Error found : {e}")
+
+        return False

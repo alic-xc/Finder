@@ -9,3 +9,6 @@ class extensionError(Exception):
 
 class actionError(Exception):
     pass
+
+class directoryError(Exception):
+    pass
