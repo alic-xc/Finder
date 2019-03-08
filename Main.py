@@ -1,9 +1,8 @@
 from .FinderException import argsError, queryError, extensionError, actionError, directoryError
 from datetime import datetime
-from shutil import copy, move
-import os
+from shutil import copy, copytree, move
 import random
-
+import os
 class finder:
 
     valid_actions = ['delete','copy','move', 'rename']
@@ -120,13 +119,15 @@ class finder:
 
             if action == 'copy':
                 print(f" ** copying {data} **")
+                if os.path.isdir(data):
+                    copytree(data, self.destination)
+
                 copy(data, self.destination)
 
 
             if action == 'move':
                 print(f" ** moving {data} **")
                 move(data, self.destination)
-
 
             if action == 'delete':
                 print(f" ** deleting {data} **")
