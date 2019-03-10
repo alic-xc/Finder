@@ -1,5 +1,5 @@
-from .Main import finder
+from .Main import Finder
 
 
 if "__main__" == __name__:
-    finder()
+    Finder()

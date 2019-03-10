@@ -1,9 +1,10 @@
 from .FinderException import argsError, queryError, extensionError, actionError, directoryError
-from datetime import datetime
 from shutil import copy, copytree, move
 import random
 import os
-class finder:
+
+
+class Finder:
 
     valid_actions = ['delete','copy','move', 'rename']
 
@@ -11,8 +12,6 @@ class finder:
         self.files = 0
         self.folders = 0
         self.path = path
-        self.ext = ''
-        self.action = ''
         self.destination = f"{self.path}/{random.randint(1,100000)}"
 
     def extension_searcher(self, ext, action):
@@ -23,7 +22,7 @@ class finder:
 
                 raise extensionError(" Please, specify your extension")
 
-            if action is None or action not in finder.valid_actions:
+            if action is None or action not in Finder.valid_actions:
 
                 raise actionError(" Please, specify valid action ")
 
@@ -47,7 +46,7 @@ class finder:
                         # perform a required action with the file
                         print(f" [100%]  {file}  :  [{currentFolder}]")
                         full_file_path = f"{currentFolder}/{file}"
-                        self.required_action(action='copy', data=full_file_path)
+                        self.required_action(action=action, data=full_file_path)
                         counter += 1
 
             print(f'Total files found: {counter} file(s)')
@@ -74,13 +73,12 @@ class finder:
             if folder is False and file is False:
                 raise argsError(" either one of the arg(s) is required")
 
-            if action not in finder.valid_actions:
+            if action not in Finder.valid_actions:
                 raise actionError(" action is required")
 
             if not self.set_directory():
 
                 return False
-
 
             for currentFolder, subFolder, files in os.walk(self.path):
 
@@ -92,7 +90,6 @@ class finder:
                 if folder is True :
                     if query in currentFolder:
                         print(f" Match Found (Folder) : {currentFolder}")
-                        self.required_action(action, currentFolder)
 
                 if file is True:
                     for x in files:
@@ -110,6 +107,7 @@ class finder:
 
         except Exception as e:
             print(f"Error Found: {e}")
+
     
     def required_action(self, action, data ):
         """ mapped string with function on working on files or folders """
@@ -122,18 +120,21 @@ class finder:
                 if os.path.isdir(data):
                     copytree(data, self.destination)
 
-                copy(data, self.destination)
+                if os.path.isfile(data):
+                    copy(data, self.destination)
 
 
             if action == 'move':
                 print(f" ** moving {data} **")
                 move(data, self.destination)
 
+
             if action == 'delete':
                 print(f" ** deleting {data} **")
                 os.unlink(data)
 
             print("done")
+            return True
 
         except argsError as a:
 
